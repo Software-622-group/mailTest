@@ -59,7 +59,6 @@ class CoursesController < ApplicationController
     @course=@course.sort_by{|e| e[:course_time]}
   end
 
-
   ####1系统启动的时候 调用select和qquit方法 登录的的账户的信息得以从数据iu中加载出来
 
   def select
@@ -96,6 +95,8 @@ class CoursesController < ApplicationController
   def index
     @course=current_user.teaching_courses if teacher_logged_in?
     @course=current_user.courses if student_logged_in?
+    s_credit=0
+      
   end
 
 
