@@ -5,7 +5,6 @@
         <h4>编辑个人信息</h4>
       </div>
       <div class="panel-body">
-
         <%= form_for current_user, html: {role: 'form'} do |f| %>
             <%= render 'shared/error_messages', :object => current_user %>
             <div class="form-group">

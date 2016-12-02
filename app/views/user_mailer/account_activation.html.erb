@@ -1,0 +1,5 @@
+<h1>CourseSelect</h1>
+
+<p>Hi <%= @user.name %>,</p>
+<p>Welcome to the CourseSelect! Click on the link below to activate your account:</p>
+<%= link_to "激活", edit_account_activation_url(@user.activation_token, email: @user.email) %>

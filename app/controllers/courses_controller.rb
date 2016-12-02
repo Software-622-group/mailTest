@@ -40,6 +40,15 @@ class CoursesController < ApplicationController
     end
     redirect_to courses_path, flash: flash
   end
+  
+  def open
+    @course=Course.find_by_id(params[:id])
+    if @course.update_attributes(:course_open =>"true")
+      redirect_to courses_path, flash={:success => "开启成功: #{@course.name}"}
+    else
+      redirect_to courses_path, flash={:danger =>"#{@course.name} 开启失败"}
+    end
+  end
 
   def destroy
     @course=Course.find_by_id(params[:id])
@@ -54,8 +63,16 @@ class CoursesController < ApplicationController
   def list
     @course=Course.all
     @course=@course-current_user.courses
-
+    openedcourses=[]
+    @course.each do
+      |course|
+      if course.course_open == true
+        openedcourses<< course
+      end
+    end
     #对课程进行排序
+    @course.clear
+    @course=openedcourses
     @course=@course.sort_by{|e| e[:course_time]}
   end
 

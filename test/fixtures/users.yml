@@ -7,5 +7,17 @@
 
 michael:
   name: 彭兆卿
-  email: student1@test.com
+  email: admin@test.com
   password_digest: <%= User.digest('password') %>
+  admin: true
+  activated: true
+  activated_at: <%= Time.zone.now %>
+
+<% 10000.times do |index| %>
+user_<%= index %>
+name: <%= "User#{index}" %>
+email: <%= "student#{index}@test.com" %>
+password_digest: <%= User.digest('password') %>
+activated: true
+activated_at: <%= Time.zone.now %>
+<% end %>

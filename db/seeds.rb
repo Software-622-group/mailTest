@@ -39,7 +39,7 @@ end
 #-------------------------------------------------------------------------------------
 
 
-User.create(
+User.create!(
     name: "彭兆卿",
     email: "admin@test.com",
     num: "201628008629001",
@@ -47,8 +47,11 @@ User.create(
     department: "计算机与控制学院",
     password: "password",
     password_confirmation: "password",
-    admin: true
+    admin: true,
+    activated: true,
+    activated_at: Time.zone.now
 )
+
 
 teacher_map={
     1 => {name: "胡伟武", department: "计算技术研究所"},
@@ -149,7 +152,7 @@ teacher_map.keys.each do |index|
 
 end
 
-(1..200).each do |index|
+(1..10000).each do |index|
   student=User.create!(
       name: StudentGenerator.name,
       email: "student#{index}@test.com",
@@ -158,6 +161,8 @@ end
       department: StudentGenerator.department,
       password: "password",
       password_confirmation: "password",
+      activated: true,
+      activated_at: Time.zone.now
   )
 
   course_array=(1..34).to_a.sort { rand() - 0.5 }[1..rand(4..8)]

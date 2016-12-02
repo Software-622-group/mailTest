@@ -1,7 +1,8 @@
 class User < ActiveRecord::Base
 
   before_save :downcase_email
-  attr_accessor :remember_token
+  attr_accessor :remember_token, :activation_token
+  before_create :create_activation_digest
   validates :name, presence: true, length: {maximum: 50}
   validates :password, presence: true, length: {minimum: 6}, allow_nil: true
 
@@ -45,14 +46,63 @@ class User < ActiveRecord::Base
   # Returns true if the given token matches the digest.
   def user_authenticated?(attribute, token)
     digest = self.send("#{attribute}_digest")
+   
     return false if digest.nil?
-    BCrypt::Password.new(digest).is_password?(token)
+    obj=BCrypt::Password.new(digest)
+    puts "Bcrypt::passoword"
+    puts obj.to_s
+    obj.is_password?(token)
   end
-
+  
+  # def validate
+  #   #验证name不能为空
+  #   errors.add("", "用户只能是字母、数字或者下划线，且长度必须为4到20位")
+  #     unless name = ~/^\w{4,20}$/
+  #   end
+  #   #验证name不能是数据库中已经存在的名字
+  #   errors.add("", "用户名不能重复，您选择的用户已经存在")
+  #     unless User.find_by_name(name).nil?
+  #   end
+  #   #验证password不能为空
+  #   errors.add("", "密码只能是字母、数字或者下划线，且长度必须为4到20位")
+  #     unless password = ~/^[a-zA-Z0-9]{4,20}$/
+  #   end
+  #   #验证email的规则
+  #   errors.add("", "电子邮件必须匹配电子邮件规则")
+  #     unless email = ~/^\w+@\w+,[a-zA-Z]{2,6}$/
+  #   end
+  # end
+  
+  #创建并赋值激活令牌和摘要
+  def create_activation_digest
+    self.activation_token = User.new_token
+    self.activation_digest = User.digest(activation_token)
+  end
+  
+  def authenticated?(attribute, token)
+    digest = send("#{attribute}_digest")
+     puts "digest"
+    puts digest
+    return false if digest.nil?
+    obj=BCrypt::Password.new(digest)
+    puts "Bcrypt::passoword"
+    puts obj.to_s
+    obj.is_password?(token)
+    return true
+  end
+  
+  def activate
+    update_attribute(:activated, true)
+    update_attribute(:activated_at, Time.zone.now)
+  end
+  
+  def send_activation_email
+    UserMailer.account_activation(self).deliver_now
+  end
+  
   private
 
   def downcase_email
     self.email = email.downcase
   end
-
 end
